@@ -14,7 +14,11 @@ class Main(Frame):
         self.canvas.pack()
 
         self.pelotilla = None
+        self.teclas_presionadas = {}  # Diccionario para rastrear teclas presionadas
         self.inicio()
+
+        # Inicia el bucle de movimiento
+        self.actualizar_movimiento()
 
     def inicio(self):
         oreja1 = self.canvas.create_polygon(200, 120, 210, 70, 220, 120, fill='orange')
@@ -29,27 +33,35 @@ class Main(Frame):
         pata4 = self.canvas.create_oval(300, 180, 310, 220, fill='orange')
         self.gato = [cabeza, ojo1, ojo2, cuerpo, oreja1, oreja2, pata1, pata2, pata3, pata4]
 
-        self.root.bind('<Up>', lambda event: self.mover_arriba(event, self.gato))
-        self.root.bind('<Down>', lambda event: self.mover_abajo(event, self.gato))
-        self.root.bind('<Left>', lambda event: self.mover_izquierda(event, self.gato))
-        self.root.bind('<Right>', lambda event: self.mover_derecha(event, self.gato))
+        # Vincula eventos de teclado
+        self.root.bind('<KeyPress>', self.tecla_presionada)
+        self.root.bind('<KeyRelease>', self.tecla_liberada)
         self.root.bind('<Button-1>', lambda event: self.buscar_pelota(event))
 
-    def mover_abajo(self, event, gato):
-        for i in gato:
-            self.canvas.move(i, 0, 10)
+    def tecla_presionada(self, event):
+        self.teclas_presionadas[event.keysym] = True
 
-    def mover_arriba(self, event, gato):
-        for i in gato:
-            self.canvas.move(i, 0, -10)
+    def tecla_liberada(self, event):
+        if event.keysym in self.teclas_presionadas:
+            del self.teclas_presionadas[event.keysym]
 
-    def mover_izquierda(self, event, gato):
-        for i in gato:
-            self.canvas.move(i, -10, 0)
+    def actualizar_movimiento(self):
+        dx, dy = 0, 0
+        if 'Up' in self.teclas_presionadas:
+            dy -= 5
+        if 'Down' in self.teclas_presionadas:
+            dy += 5
+        if 'Left' in self.teclas_presionadas:
+            dx -= 5
+        if 'Right' in self.teclas_presionadas:
+            dx += 5
 
-    def mover_derecha(self, event, gato):
-        for i in gato:
-            self.canvas.move(i, 10, 0)
+        if dx != 0 or dy != 0:
+            for i in self.gato:
+                self.canvas.move(i, dx, dy)
+
+        # Llama a este método nuevamente después de 20 ms
+        self.root.after(20, self.actualizar_movimiento)
 
     def buscar_pelota(self, event):
         if self.pelotilla is not None:
