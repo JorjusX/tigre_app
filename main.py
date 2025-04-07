@@ -14,10 +14,9 @@ class Main(Frame):
         self.canvas.pack()
 
         self.pelotilla = None
-        self.teclas_presionadas = {}  # Diccionario para rastrear teclas presionadas
+        self.teclas_presionadas = {}
         self.inicio()
 
-        # Inicia el bucle de movimiento
         self.actualizar_movimiento()
 
     def inicio(self):
@@ -28,10 +27,11 @@ class Main(Frame):
         ojo2 = self.canvas.create_oval(230, 120, 240, 130, fill='black')
         pata1 = self.canvas.create_oval(210, 180, 220, 220, fill='orange')
         pata2 = self.canvas.create_oval(290, 180, 300, 220, fill='orange')
+        cola = self.canvas.create_line(310, 170, 350, 160, 340, 180, 360, 190, width=5, fill='orange', smooth=True)
         cuerpo = self.canvas.create_oval(210, 140, 310, 200, fill='orange')
         pata3 = self.canvas.create_oval(220, 180, 230, 220, fill='orange')
         pata4 = self.canvas.create_oval(300, 180, 310, 220, fill='orange')
-        self.gato = [cabeza, ojo1, ojo2, cuerpo, oreja1, oreja2, pata1, pata2, pata3, pata4]
+        self.gato = [cabeza, ojo1, ojo2, cuerpo, oreja1, oreja2, pata1, pata2, pata3, pata4, cola]
 
         # Vincula eventos de teclado
         self.root.bind('<KeyPress>', self.tecla_presionada)
